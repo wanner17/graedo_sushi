@@ -14,7 +14,9 @@ import {
   deleteMenuItemImage,
 } from "./actions";
 
-import { Card, Input, Select, Button, Label, Badge, Divider, SectionHeader, Textarea } from "@/components/ui/ui";
+import { Card, Input, Select, Label, Badge, Divider, SectionHeader, Textarea } from "@/components/ui/ui";
+import { FormAction } from "@/components/ui/FormAction";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 export default async function AdminMenuPage() {
   const categories = await prisma.category.findMany({
@@ -61,15 +63,15 @@ export default async function AdminMenuPage() {
         <div className="space-y-5 lg:col-span-5">
           {/* 카테고리 관리 */}
           <Card title="카테고리" description="정렬 숫자가 작을수록 위에 표시됩니다.">
-            <form action={createCategory} className="flex gap-2">
+            <FormAction action={createCategory} successMsg="카테고리가 추가되었습니다." className="flex gap-2">
               <div className="flex-1">
                 <Input name="name" placeholder="카테고리명 (예: 초밥)" required />
               </div>
               <div className="w-20">
                 <Input name="sortOrder" type="number" placeholder="정렬" />
               </div>
-              <Button type="submit" variant="primary" size="sm">추가</Button>
-            </form>
+              <SubmitButton variant="primary" size="sm">추가</SubmitButton>
+            </FormAction>
 
             {categories.length > 0 ? (
               <div className="mt-4 space-y-2">
@@ -84,26 +86,30 @@ export default async function AdminMenuPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
-                        <form action={moveCategory}>
+                        <FormAction action={moveCategory}>
                           <input type="hidden" name="id" value={c.id} />
                           <input type="hidden" name="dir" value="up" />
-                          <Button size="sm" variant="ghost" type="submit" className="px-2">↑</Button>
-                        </form>
-                        <form action={moveCategory}>
+                          <SubmitButton size="sm" variant="ghost" className="px-2">↑</SubmitButton>
+                        </FormAction>
+                        <FormAction action={moveCategory}>
                           <input type="hidden" name="id" value={c.id} />
                           <input type="hidden" name="dir" value="down" />
-                          <Button size="sm" variant="ghost" type="submit" className="px-2">↓</Button>
-                        </form>
-                        <form action={deleteCategory}>
+                          <SubmitButton size="sm" variant="ghost" className="px-2">↓</SubmitButton>
+                        </FormAction>
+                        <FormAction
+                          action={deleteCategory}
+                          successMsg="카테고리가 삭제되었습니다."
+                          confirmMsg="카테고리를 삭제하시겠습니까? 해당 카테고리의 메뉴도 모두 삭제됩니다."
+                        >
                           <input type="hidden" name="id" value={c.id} />
-                          <Button size="sm" variant="danger" type="submit">삭제</Button>
-                        </form>
+                          <SubmitButton size="sm" variant="danger">삭제</SubmitButton>
+                        </FormAction>
                       </div>
                     </div>
 
                     <Divider />
 
-                    <form action={updateCategory} className="flex flex-wrap gap-2">
+                    <FormAction action={updateCategory} successMsg="카테고리가 저장되었습니다." className="flex flex-wrap gap-2">
                       <input type="hidden" name="id" value={c.id} />
                       <div className="flex-1 min-w-[120px]">
                         <Input name="name" defaultValue={c.name} placeholder="카테고리명" />
@@ -115,8 +121,8 @@ export default async function AdminMenuPage() {
                         <input type="checkbox" name="isActive" defaultChecked={c.isActive} className="accent-amber-500" />
                         표시
                       </label>
-                      <Button type="submit" variant="secondary" size="sm">저장</Button>
-                    </form>
+                      <SubmitButton variant="secondary" size="sm">저장</SubmitButton>
+                    </FormAction>
                   </div>
                 ))}
               </div>
@@ -129,7 +135,7 @@ export default async function AdminMenuPage() {
 
           {/* 메뉴 추가 */}
           <Card title="메뉴 추가" description="카테고리를 먼저 선택하고 메뉴를 추가하세요.">
-            <form action={createMenuItem} className="space-y-3">
+            <FormAction action={createMenuItem} successMsg="메뉴가 추가되었습니다." className="space-y-3">
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <Label>카테고리</Label>
@@ -177,8 +183,8 @@ export default async function AdminMenuPage() {
                 </label>
               </div>
 
-              <Button className="w-full" type="submit" variant="primary">+ 메뉴 추가</Button>
-            </form>
+              <SubmitButton className="w-full" variant="primary">+ 메뉴 추가</SubmitButton>
+            </FormAction>
           </Card>
         </div>
 
@@ -227,48 +233,52 @@ export default async function AdminMenuPage() {
                                 </div>
 
                                 <div className="flex flex-wrap gap-1">
-                                  <form action={moveMenuItem}>
+                                  <FormAction action={moveMenuItem}>
                                     <input type="hidden" name="id" value={m.id} />
                                     <input type="hidden" name="dir" value="up" />
-                                    <Button size="sm" variant="ghost" type="submit" className="px-2">↑</Button>
-                                  </form>
-                                  <form action={moveMenuItem}>
+                                    <SubmitButton size="sm" variant="ghost" className="px-2">↑</SubmitButton>
+                                  </FormAction>
+                                  <FormAction action={moveMenuItem}>
                                     <input type="hidden" name="id" value={m.id} />
                                     <input type="hidden" name="dir" value="down" />
-                                    <Button size="sm" variant="ghost" type="submit" className="px-2">↓</Button>
-                                  </form>
-                                  <form action={toggleMenuFlag}>
+                                    <SubmitButton size="sm" variant="ghost" className="px-2">↓</SubmitButton>
+                                  </FormAction>
+                                  <FormAction action={toggleMenuFlag}>
                                     <input type="hidden" name="id" value={m.id} />
                                     <input type="hidden" name="field" value="isBest" />
-                                    <Button size="sm" variant="ghost" type="submit" className={m.isBest ? "text-amber-600" : ""}>
+                                    <SubmitButton size="sm" variant="ghost" className={m.isBest ? "text-amber-600" : ""}>
                                       {m.isBest ? "BEST 해제" : "BEST"}
-                                    </Button>
-                                  </form>
-                                  <form action={toggleMenuFlag}>
+                                    </SubmitButton>
+                                  </FormAction>
+                                  <FormAction action={toggleMenuFlag}>
                                     <input type="hidden" name="id" value={m.id} />
                                     <input type="hidden" name="field" value="isSoldOut" />
-                                    <Button size="sm" variant="ghost" type="submit" className={m.isSoldOut ? "text-rose-600" : ""}>
+                                    <SubmitButton size="sm" variant="ghost" className={m.isSoldOut ? "text-rose-600" : ""}>
                                       {m.isSoldOut ? "품절 해제" : "품절"}
-                                    </Button>
-                                  </form>
-                                  <form action={toggleMenuFlag}>
+                                    </SubmitButton>
+                                  </FormAction>
+                                  <FormAction action={toggleMenuFlag}>
                                     <input type="hidden" name="id" value={m.id} />
                                     <input type="hidden" name="field" value="isActive" />
-                                    <Button size="sm" variant="ghost" type="submit">
+                                    <SubmitButton size="sm" variant="ghost">
                                       {m.isActive ? "숨기기" : "표시"}
-                                    </Button>
-                                  </form>
-                                  <form action={deleteMenuItem}>
+                                    </SubmitButton>
+                                  </FormAction>
+                                  <FormAction
+                                    action={deleteMenuItem}
+                                    successMsg="메뉴가 삭제되었습니다."
+                                    confirmMsg={`"${m.name}"을(를) 삭제하시겠습니까?`}
+                                  >
                                     <input type="hidden" name="id" value={m.id} />
-                                    <Button size="sm" variant="danger" type="submit">삭제</Button>
-                                  </form>
+                                    <SubmitButton size="sm" variant="danger">삭제</SubmitButton>
+                                  </FormAction>
                                 </div>
                               </div>
 
                               <Divider />
 
                               {/* 수정 폼 */}
-                              <form action={updateMenuItem} className="space-y-3">
+                              <FormAction action={updateMenuItem} successMsg="메뉴가 저장되었습니다." className="space-y-3">
                                 <input type="hidden" name="id" value={m.id} />
 
                                 <div className="grid grid-cols-2 gap-2">
@@ -322,10 +332,10 @@ export default async function AdminMenuPage() {
                                   </label>
                                 </div>
 
-                                <Button className="w-full" type="submit" variant="secondary" size="sm">
+                                <SubmitButton className="w-full" variant="secondary" size="sm">
                                   수정 저장
-                                </Button>
-                              </form>
+                                </SubmitButton>
+                              </FormAction>
 
                               <Divider />
 
@@ -349,17 +359,23 @@ export default async function AdminMenuPage() {
                                             대표
                                           </span>
                                         ) : null}
-                                        <form action={deleteMenuItemImage} className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition">
+                                        <FormAction
+                                          action={deleteMenuItemImage}
+                                          successMsg="이미지가 삭제되었습니다."
+                                          confirmMsg="이미지를 삭제하시겠습니까?"
+                                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition"
+                                        >
                                           <input type="hidden" name="imageId" value={img.id} />
                                           <input type="hidden" name="menuItemId" value={m.id} />
-                                          <button
-                                            type="submit"
-                                            className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-600 text-white text-[10px] font-bold shadow hover:bg-rose-700"
+                                          <SubmitButton
+                                            variant="danger"
+                                            size="sm"
                                             title="이미지 삭제"
+                                            className="h-5 w-5 rounded-full border-0 bg-rose-600 text-white text-[10px] font-bold shadow hover:bg-rose-700 p-0 min-w-0"
                                           >
                                             ✕
-                                          </button>
-                                        </form>
+                                          </SubmitButton>
+                                        </FormAction>
                                       </div>
                                     ))}
                                   </div>
@@ -368,7 +384,12 @@ export default async function AdminMenuPage() {
                                 )}
 
                                 {/* 이미지 추가 */}
-                                <form action={uploadMenuImage} encType="multipart/form-data" className="flex items-center gap-2">
+                                <FormAction
+                                  action={uploadMenuImage}
+                                  successMsg="이미지가 업로드되었습니다."
+                                  encType="multipart/form-data"
+                                  className="flex items-center gap-2"
+                                >
                                   <input type="hidden" name="id" value={m.id} />
                                   <input
                                     type="file"
@@ -376,8 +397,8 @@ export default async function AdminMenuPage() {
                                     accept="image/jpeg,image/png,image/webp,image/gif"
                                     className="flex-1 text-xs text-neutral-600 file:mr-2 file:rounded-lg file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-stone-700 hover:file:bg-stone-200"
                                   />
-                                  <Button type="submit" variant="secondary" size="sm">추가</Button>
-                                </form>
+                                  <SubmitButton variant="secondary" size="sm">추가</SubmitButton>
+                                </FormAction>
                               </div>
                             </div>
                           ))

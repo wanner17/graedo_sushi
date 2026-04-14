@@ -57,6 +57,15 @@ const WAIT_COLOR: Record<WaitingStatus, string> = {
   EXPIRED: "bg-gray-100 text-gray-500",
 };
 
+function Spinner() {
+  return (
+    <svg className="animate-spin h-3 w-3 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  );
+}
+
 function formatDateTime(iso: string) {
   const d = new Date(iso);
   return d.toLocaleString("ko-KR", {
@@ -94,19 +103,19 @@ export default function AdminReservationsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       }).then((r) => r.json()),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ["admin-reservations"] });
       qc.invalidateQueries({ queryKey: ["admin-waiting"] });
       qc.invalidateQueries({ queryKey: ["reservation-status"] });
+      const label = STATUS_LABEL[variables.status];
+      alert(`상태가 "${label}"(으)로 변경되었습니다.`);
+    },
+    onError: () => {
+      alert("오류가 발생했습니다. 다시 시도해 주세요.");
     },
   });
 
-  const NEXT_STATUS: Record<ReservationStatus, ReservationStatus | null> = {
-    CONFIRMED: "COMPLETED",
-    COMPLETED: null,
-    CANCELLED: null,
-    NO_SHOW: null,
-  };
+  const isPending = updateStatus.isPending;
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-6">
@@ -180,25 +189,31 @@ export default function AdminReservationsPage() {
                     {r.status === "CONFIRMED" && (
                       <div className="flex gap-2 mt-3">
                         <button
+                          disabled={isPending}
                           onClick={() => updateStatus.mutate({ id: r.id, status: "COMPLETED" })}
-                          className="flex-1 text-xs py-1.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs py-1.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
+                          {isPending ? <Spinner /> : null}
                           식사 완료
                         </button>
                         <button
+                          disabled={isPending}
                           onClick={() => {
                             if (confirm(`${r.guestName}님 예약을 취소하시겠습니까?\n대기자에게 알림이 발송됩니다.`)) {
                               updateStatus.mutate({ id: r.id, status: "CANCELLED" });
                             }
                           }}
-                          className="flex-1 text-xs py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
+                          {isPending ? <Spinner /> : null}
                           취소 처리
                         </button>
                         <button
+                          disabled={isPending}
                           onClick={() => updateStatus.mutate({ id: r.id, status: "NO_SHOW" })}
-                          className="flex-1 text-xs py-1.5 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs py-1.5 bg-orange-400 text-white rounded-lg hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
+                          {isPending ? <Spinner /> : null}
                           노쇼
                         </button>
                       </div>

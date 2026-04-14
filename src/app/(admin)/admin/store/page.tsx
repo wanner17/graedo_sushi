@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { upsertStoreSettings } from "./actions";
-import { Card, Input, Textarea, Button, Label, Divider, SectionHeader } from "@/components/ui/ui";
+import { Card, Input, Textarea, Label, Divider, SectionHeader } from "@/components/ui/ui";
+import { FormAction } from "@/components/ui/FormAction";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 const STORE_ID = "main";
 
@@ -56,7 +58,7 @@ export default async function AdminStorePage() {
         <StatCard label="BEST" value={`${bestItems}개`} icon="⭐" />
       </div>
 
-      <form action={upsertStoreSettings} className="space-y-5">
+      <FormAction action={upsertStoreSettings} successMsg="가게 정보가 저장되었습니다." className="space-y-5">
         {/* ── 기본 정보 ── */}
         <Card title="기본 정보" description="가게명 · 연락처 · 주소">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -222,12 +224,12 @@ export default async function AdminStorePage() {
           <Divider />
 
           <div className="flex justify-end">
-            <Button type="submit" variant="primary">
+            <SubmitButton variant="primary">
               💾 저장하기
-            </Button>
+            </SubmitButton>
           </div>
         </Card>
-      </form>
+      </FormAction>
     </div>
   );
 }
