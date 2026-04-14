@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSessionToken, setAdminCookie } from "@/src/lib/auth.server";
+import { createSessionToken, setAdminCookie } from "@/lib/auth.server";
 
 export async function POST(req: Request) {
   const { password } = await req.json();

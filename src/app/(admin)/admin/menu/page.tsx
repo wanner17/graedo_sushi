@@ -1,4 +1,4 @@
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import {
   createCategory,
   updateCategory,
@@ -9,9 +9,11 @@ import {
   deleteMenuItem,
   toggleMenuFlag,
   moveMenuItem,
+  uploadMenuImage,
+  deleteMenuImage,
 } from "./actions";
 
-import { Card, Input, Select, Button, Label, Badge, Divider, SectionHeader } from "@/src/components/ui/ui";
+import { Card, Input, Select, Button, Label, Badge, Divider, SectionHeader } from "@/components/ui/ui";
 
 export default async function AdminMenuPage() {
   const categories = await prisma.category.findMany({
@@ -329,6 +331,46 @@ export default async function AdminMenuPage() {
                                   수정 저장
                                 </Button>
                               </form>
+
+                              <Divider />
+
+                              {/* 이미지 관리 */}
+                              <div className="space-y-2">
+                                <Label>메뉴 이미지</Label>
+                                {m.imagePath ? (
+                                  <div className="flex items-center gap-3">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={m.imagePath}
+                                      alt={m.name}
+                                      className="h-16 w-16 rounded-lg object-cover border border-neutral-200"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-xs text-neutral-500 truncate">{m.imagePath}</p>
+                                      <form action={deleteMenuImage} className="mt-1">
+                                        <input type="hidden" name="id" value={m.id} />
+                                        <Button type="submit" variant="danger" size="sm">
+                                          이미지 삭제
+                                        </Button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p className="text-xs text-neutral-400">등록된 이미지가 없습니다.</p>
+                                )}
+                                <form action={uploadMenuImage} encType="multipart/form-data" className="flex items-center gap-2">
+                                  <input type="hidden" name="id" value={m.id} />
+                                  <input
+                                    type="file"
+                                    name="image"
+                                    accept="image/jpeg,image/png,image/webp,image/gif"
+                                    className="flex-1 text-xs text-neutral-600 file:mr-2 file:rounded-lg file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-stone-700 hover:file:bg-stone-200"
+                                  />
+                                  <Button type="submit" variant="secondary" size="sm">
+                                    업로드
+                                  </Button>
+                                </form>
+                              </div>
                             </div>
                           ))
                         )}

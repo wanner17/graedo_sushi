@@ -7,6 +7,7 @@ import { cn } from "./ui/cn";
 const navItems = [
   { href: "/admin/store", label: "가게 정보", icon: "🏪" },
   { href: "/admin/menu", label: "메뉴 관리", icon: "📋" },
+  { href: "/admin/reservations", label: "예약 관리", icon: "📅" },
   { href: "/admin/preview/menu", label: "손님 화면", icon: "👁️" },
 ];
 

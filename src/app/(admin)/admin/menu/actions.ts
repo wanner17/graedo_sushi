@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { supabaseAdmin, MENU_BUCKET, getPublicUrl } from "@/lib/supabase";
 
 const ADMIN_PATH = "/admin/menu";
 const PUBLIC_MENU_PATH = "/menu";
@@ -188,6 +189,68 @@ export async function toggleMenuFlag(fd: FormData) {
   await prisma.menuItem.update({
     where: { id },
     data: { [field]: next } as any,
+  });
+
+  revalidateAll();
+}
+
+/** ---------- MenuItem 이미지 ---------- */
+
+export async function uploadMenuImage(fd: FormData) {
+  const id = s(fd, "id");
+  const file = fd.get("image") as File | null;
+  if (!id || !file || file.size === 0) return;
+
+  const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+  const allowed = ["jpg", "jpeg", "png", "webp", "gif"];
+  if (!allowed.includes(ext)) throw new Error("지원하지 않는 이미지 형식입니다. (jpg/png/webp/gif)");
+
+  const bytes = await file.arrayBuffer();
+  const storagePath = `${id}.${ext}`;
+
+  // 버킷이 없으면 생성 (public)
+  const { data: buckets } = await supabaseAdmin.storage.listBuckets();
+  if (!buckets?.find((b) => b.name === MENU_BUCKET)) {
+    await supabaseAdmin.storage.createBucket(MENU_BUCKET, { public: true });
+  }
+
+  const { error } = await supabaseAdmin.storage
+    .from(MENU_BUCKET)
+    .upload(storagePath, bytes, {
+      contentType: file.type || "image/jpeg",
+      upsert: true,
+    });
+
+  if (error) throw new Error(`이미지 업로드 실패: ${error.message}`);
+
+  const publicUrl = getPublicUrl(storagePath);
+
+  await prisma.menuItem.update({
+    where: { id },
+    data: { imagePath: publicUrl },
+  });
+
+  revalidateAll();
+}
+
+export async function deleteMenuImage(fd: FormData) {
+  const id = s(fd, "id");
+  if (!id) return;
+
+  const item = await prisma.menuItem.findUnique({ where: { id } });
+  if (item?.imagePath) {
+    // URL에서 파일 경로 추출 (버킷 이름 이후 부분)
+    const url = new URL(item.imagePath);
+    const segments = url.pathname.split(`/${MENU_BUCKET}/`);
+    const storagePath = segments[1];
+    if (storagePath) {
+      await supabaseAdmin.storage.from(MENU_BUCKET).remove([storagePath]);
+    }
+  }
+
+  await prisma.menuItem.update({
+    where: { id },
+    data: { imagePath: null, imageAlt: null },
   });
 
   revalidateAll();

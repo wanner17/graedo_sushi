@@ -57,7 +57,63 @@ model MenuItem {
 
   imagePath String?   // 예: menu-items/<id>/<file>.jpg
   imageAlt  String?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// 예약 시스템
+// ─────────────────────────────────────────────
+
+enum ReservationStatus {
+  CONFIRMED   // 확정
+  CANCELLED   // 취소
+  COMPLETED   // 식사 완료
+  NO_SHOW     // 노쇼
+}
+
+model Reservation {
+  id          String            @id @default(cuid())
+  date        DateTime          // 예약 날짜+시간 (UTC)
+  partySize   Int               // 인원
+  status      ReservationStatus @default(CONFIRMED)
+  guestName   String
+  guestPhone  String
+  guestEmail  String?
+  notes       String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date, status])
+}
+
+enum WaitingStatus {
+  WAITING   // 대기 중
+  NOTIFIED  // 알림 발송됨
+  CLAIMED   // 예약 선점 완료
+  EXPIRED   // 알림 만료
+}
+
+model WaitingList {
+  id              String        @id @default(cuid())
+  guestName       String
+  guestPhone      String
+  guestEmail      String?
+  desiredDate     DateTime      // 희망 날짜 (자정 기준 UTC)
+  desiredTimeFrom String        // "12:00"
+  desiredTimeTo   String        // "14:00"
+  partySize       Int
+  notifyEnabled   Boolean       @default(true)
+  status          WaitingStatus @default(WAITING)
+
+  notifiedAt      DateTime?     // 알림 발송 시각
+  notifyToken     String?       @unique  // 선점 토큰 (HMAC)
+  notifyTokenExp  DateTime?     // 토큰 만료 (발송 후 5분)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([desiredDate, status])
 }

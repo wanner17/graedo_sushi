@@ -1,5 +1,5 @@
-import { prisma } from "@/src/lib/prisma";
-import { CategoryNav } from "@/src/components/CategoryNav";
+import { prisma } from "@/lib/prisma";
+import { CategoryNav } from "@/components/CategoryNav";
 
 const STORE_ID = "main";
 

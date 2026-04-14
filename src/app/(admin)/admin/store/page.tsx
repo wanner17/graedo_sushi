@@ -1,6 +1,6 @@
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { upsertStoreSettings } from "./actions";
-import { Card, Input, Textarea, Button, Label, Divider, SectionHeader } from "@/src/components/ui/ui";
+import { Card, Input, Textarea, Button, Label, Divider, SectionHeader } from "@/components/ui/ui";
 
 const STORE_ID = "main";
 

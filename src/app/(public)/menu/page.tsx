@@ -1,8 +1,8 @@
-import { prisma } from "@/src/lib/prisma";
-import { CategoryNav } from "@/src/components/CategoryNav";
-import { StoreStatus } from "@/src/components/StoreStatus";
-import { FloatingBar } from "@/src/components/FloatingBar";
-import { MenuSearch } from "@/src/components/MenuSearch";
+import { prisma } from "@/lib/prisma";
+import { CategoryNav } from "@/components/CategoryNav";
+import { StoreStatus } from "@/components/StoreStatus";
+import { FloatingBar } from "@/components/FloatingBar";
+import { MenuSearch } from "@/components/MenuSearch";
 
 const STORE_ID = "main";
 
@@ -251,39 +251,80 @@ export default async function MenuPage() {
                         <div
                           key={m.id}
                           className={[
-                            "relative flex items-center justify-between gap-3 rounded-2xl border bg-white p-4 shadow-sm transition-all duration-200",
+                            "relative flex items-center justify-between gap-3 rounded-2xl border bg-white shadow-sm transition-all duration-200",
                             m.isSoldOut
                               ? "opacity-60"
                               : "hover:-translate-y-0.5 hover:shadow-md hover:border-neutral-300",
+                            m.imagePath ? "overflow-hidden p-0" : "p-4",
                           ].join(" ")}
                         >
-                          <div className="min-w-0 flex-1">
-                            {(m.isBest || m.isSoldOut) ? (
-                              <div className="mb-1.5 flex flex-wrap gap-1">
-                                {m.isBest ? (
-                                  <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-black text-white">
-                                    BEST
-                                  </span>
+                          {m.imagePath ? (
+                            <>
+                              {/* 이미지 있을 때: 왼쪽 정보, 오른쪽 이미지 */}
+                              <div className="flex-1 min-w-0 p-4 pr-2">
+                                {(m.isBest || m.isSoldOut) ? (
+                                  <div className="mb-1.5 flex flex-wrap gap-1">
+                                    {m.isBest ? (
+                                      <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-black text-white">
+                                        BEST
+                                      </span>
+                                    ) : null}
+                                    {m.isSoldOut ? (
+                                      <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-600">
+                                        품절
+                                      </span>
+                                    ) : null}
+                                  </div>
                                 ) : null}
-                                {m.isSoldOut ? (
-                                  <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-600">
-                                    품절
-                                  </span>
-                                ) : null}
+                                <div className="font-semibold leading-snug text-stone-900">{m.name}</div>
+                                <div className="mt-1.5 shrink-0 text-right">
+                                  {m.isSoldOut ? (
+                                    <span className="text-sm font-semibold text-rose-500">품절</span>
+                                  ) : (
+                                    <span className="text-base font-bold text-stone-900">
+                                      {formatWon(m.price)}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                            ) : null}
-                            <div className="font-semibold leading-snug text-stone-900">{m.name}</div>
-                          </div>
-
-                          <div className="shrink-0 text-right">
-                            {m.isSoldOut ? (
-                              <span className="text-sm font-semibold text-rose-500">품절</span>
-                            ) : (
-                              <span className="text-base font-bold text-stone-900">
-                                {formatWon(m.price)}
-                              </span>
-                            )}
-                          </div>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={m.imagePath}
+                                alt={m.imageAlt ?? m.name}
+                                className="h-24 w-24 shrink-0 object-cover"
+                              />
+                            </>
+                          ) : (
+                            <>
+                              {/* 이미지 없을 때: 기존 레이아웃 */}
+                              <div className="min-w-0 flex-1">
+                                {(m.isBest || m.isSoldOut) ? (
+                                  <div className="mb-1.5 flex flex-wrap gap-1">
+                                    {m.isBest ? (
+                                      <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-black text-white">
+                                        BEST
+                                      </span>
+                                    ) : null}
+                                    {m.isSoldOut ? (
+                                      <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-600">
+                                        품절
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                ) : null}
+                                <div className="font-semibold leading-snug text-stone-900">{m.name}</div>
+                              </div>
+                              <div className="shrink-0 text-right">
+                                {m.isSoldOut ? (
+                                  <span className="text-sm font-semibold text-rose-500">품절</span>
+                                ) : (
+                                  <span className="text-base font-bold text-stone-900">
+                                    {formatWon(m.price)}
+                                  </span>
+                                )}
+                              </div>
+                            </>
+                          )}
                         </div>
                       ))}
                     </div>
