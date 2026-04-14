@@ -10,7 +10,6 @@ type Props = {
 export function FloatingBar({ phone, kakaoOrderUrl }: Props) {
   const [visible, setVisible] = useState(false);
 
-  // 페이지 스크롤 일정 이상 내려가면 표시
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 200);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -23,14 +22,14 @@ export function FloatingBar({ phone, kakaoOrderUrl }: Props) {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      {/* 그라데이션 블러 배경 */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-stone-950/80 to-transparent" />
+      {/* 그라데이션 배경 */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-sushi-ink/85 to-transparent" />
 
       <div className="relative flex gap-3 px-4 pb-6 pt-3">
         {phone ? (
           <a
             href={`tel:${phone}`}
-            className="flex flex-1 h-13 items-center justify-center gap-2 rounded-2xl bg-amber-500 text-sm font-bold text-stone-950 shadow-lg shadow-amber-900/40 active:scale-95 transition-transform"
+            className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-sushi-red text-sm font-bold text-white shadow-lg shadow-red-900/40 active:scale-95 transition-transform"
             style={{ height: "52px" }}
           >
             <svg
@@ -58,7 +57,7 @@ export function FloatingBar({ phone, kakaoOrderUrl }: Props) {
             className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-yellow-400 text-sm font-bold text-stone-950 shadow-lg shadow-yellow-900/30 active:scale-95 transition-transform"
             style={{ height: "52px" }}
           >
-            💬 카카오 주문
+            💬 카카오 문의
           </a>
         ) : null}
       </div>

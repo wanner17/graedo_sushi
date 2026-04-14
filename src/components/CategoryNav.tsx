@@ -34,7 +34,6 @@ export function CategoryNav({ categories }: { categories: Category[] }) {
     return () => observer.disconnect();
   }, [categories]);
 
-  // 활성 버튼이 네비게이션 안에서 보이도록 스크롤
   useEffect(() => {
     const nav = navRef.current;
     const btn = activeButtonRef.current;
@@ -64,7 +63,7 @@ export function CategoryNav({ categories }: { categories: Category[] }) {
   if (categories.length === 0) return null;
 
   return (
-    <div className="sticky top-0 z-20 border-b border-neutral-100 bg-white/95 shadow-sm backdrop-blur-sm">
+    <div className="sticky top-0 z-20 border-b border-[#e8ddd3] bg-white/97 shadow-sm backdrop-blur-sm">
       <div className="mx-auto max-w-3xl px-4">
         <div
           ref={navRef}
@@ -78,8 +77,8 @@ export function CategoryNav({ categories }: { categories: Category[] }) {
               className={cn(
                 "shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all",
                 activeId === cat.id
-                  ? "bg-stone-900 text-white shadow-sm"
-                  : "text-neutral-500 hover:bg-neutral-100 hover:text-stone-900"
+                  ? "bg-sushi-red text-white shadow-sm"
+                  : "text-stone-500 hover:bg-sushi-cream hover:text-stone-800"
               )}
             >
               {cat.name}

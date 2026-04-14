@@ -78,7 +78,7 @@ export default async function PreviewMenuPage() {
               ) : null}
               {kakaoOrderUrl ? (
                 <div className="inline-flex h-11 items-center gap-2 rounded-xl bg-yellow-400 px-5 text-sm font-bold text-stone-950">
-                  💬 카카오 주문
+                  💬 카카오 문의
                 </div>
               ) : null}
               {mapUrl ? (

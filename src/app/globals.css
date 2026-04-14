@@ -9,7 +9,7 @@
   }
 
   *:focus-visible {
-    outline: 2px solid #f59e0b;
+    outline: 2px solid #c0392b;
     outline-offset: 2px;
   }
 }
@@ -25,6 +25,11 @@
 
   .animate-pulse-dot {
     animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* 일본식 붉은 구분선 그라데이션 */
+  .sushi-divider {
+    background: linear-gradient(90deg, transparent 0%, #c0392b 30%, #c0392b 70%, transparent 100%);
   }
 }
 

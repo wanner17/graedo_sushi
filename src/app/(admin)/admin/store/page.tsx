@@ -184,7 +184,7 @@ export default async function AdminStorePage() {
               />
             </div>
             <div>
-              <Label>카카오 주문 URL</Label>
+              <Label>카카오 문의 URL</Label>
               <Input
                 name="kakaoOrderUrl"
                 defaultValue={s.kakaoOrderUrl ?? ""}
