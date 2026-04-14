@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model StoreSettings {
+  id         String  @id @default("main")
+  name       String
+  tagline    String?
+  phone      String
+  address    String
+  parking    String?
+  mapUrl     String?
+  naverPlace String?
+  instagram  String?
+  kakaoOrderUrl String?
+
+  open       String
+  close      String
+  breakStart String?
+  breakEnd   String?
+  lastOrder  String?
+  closedDays String?
+
+  noticeEnabled Boolean @default(true)
+  noticeText    String?
+
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  items     MenuItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuItem {
+  id         String   @id @default(cuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  name      String
+  price     Int
+  isBest    Boolean  @default(false)
+  isSoldOut Boolean  @default(false)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+
+  imagePath String?   // 예: menu-items/<id>/<file>.jpg
+  imageAlt  String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
